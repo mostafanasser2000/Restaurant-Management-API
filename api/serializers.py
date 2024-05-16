@@ -10,7 +10,7 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ["id", "name", "slug"]
         extra_kwargs = {
-            "slug": "read_only",
+            "slug": {"read_only": True},
         }
 
     def validate(self, attrs):
@@ -19,7 +19,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class MenuItemSerializer(serializers.ModelSerializer):
-    category_name = serializers.SlugRelatedField(
+    category_name = serializers.StringRelatedField(
         source="category", read_only=True, many=False
     )
 
@@ -36,19 +36,20 @@ class MenuItemSerializer(serializers.ModelSerializer):
             "description",
         ]
         extra_kwargs = {
-            "slug": "read_only",
+            "slug": {"read_only": True},
         }
 
     def validate(self, attrs):
         if attrs["price"] < 0:
             raise serializers.ValidationError("Price cannot be negative")
         attrs["name"] = bleach.clean(attrs["name"])
-        attrs["description"] = bleach.clean(attrs["description"])
+        if "description" in attrs:
+            attrs["description"] = bleach.clean(attrs["description"])
         return super().validate(attrs)
 
 
 class CartItemSerializer(serializers.ModelSerializer):
-    item_name = serializers.SlugRelatedField(
+    item_name = serializers.StringRelatedField(
         source="menuitem", read_only=True, many=False
     )
 
@@ -71,7 +72,7 @@ class CartSerializer(serializers.ModelSerializer):
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
-    item_name = serializers.SlugRelatedField(
+    item_name = serializers.StringRelatedField(
         source="menuitem", read_only=True, many=False
     )
 
