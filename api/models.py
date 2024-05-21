@@ -7,7 +7,7 @@ from decimal import Decimal
 
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    slug = models.SlugField(max_length=255, unique=True)
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
 
     class Meta:
         ordering = ["name"]
@@ -16,8 +16,7 @@ class Category(models.Model):
         verbose_name_plural = "categories"
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
+        self.slug = slugify(self.name)
         return super().save(*args, **kwargs)
 
     def __str__(self):
@@ -33,7 +32,7 @@ class MenuItem(models.Model):
         Category, on_delete=models.CASCADE, related_name="menu_items"
     )
     description = models.CharField(max_length=255, blank=True)
-    # image = models.ImageField(upload_to="media/", blank=True, null=True)
+    image = models.ImageField(blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -46,8 +45,7 @@ class MenuItem(models.Model):
         ]
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
+        self.slug = slugify(self.name)
         return super().save(*args, **kwargs)
 
     def __str__(self) -> str:
@@ -55,7 +53,7 @@ class MenuItem(models.Model):
 
 
 class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="cart")
+    customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="cart")
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -73,28 +71,32 @@ class CartItem(models.Model):
         unique_together = ("cart", "menuitem")
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        self.unit_price = self.item.price
+        self.unit_price = self.menuitem.price
         self.price = self.unit_price * self.quantity
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.item.title
+        return self.menuitem.name
 
 
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders")
-    # first_name = models.CharField(max_length=50, blank=True)
-    # last_name = models.CharField(max_length=50, blank=True)
-    # email = models.EmailField(blank=True)
-    # address = models.CharField(max_length=255)
-    # postal_code = models.CharField(max_length=20)
-    # city = models.CharField(max_length=100)
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("completed", "Completed"),
+        ("canceled", "Canceled"),
+    ]
+
+    customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders")
+    delivery_crew = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=True, blank=True
+    )
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False)
     discount = models.IntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(100)], default=0
     )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
 
     class Meta:
         ordering = ["-created"]
@@ -124,6 +126,10 @@ class OrderItem(models.Model):
     )
     quantity = models.PositiveIntegerField(default=1)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def save(self, *args, **kwargs):
+        self.price = self.menuitem.price
+        return super().save(*args, **kwargs)
 
     def __str__(self):
         return str(self.id)
