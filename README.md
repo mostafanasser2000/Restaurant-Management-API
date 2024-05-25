@@ -2,9 +2,8 @@
 
 This my implementation to the final project of [API'S](https://www.coursera.org/learn/apis) course from [Meta Back-End Developer Professional Certificate](https://www.coursera.org/professional-certificates/meta-back-end-developer#courses) Using [Django REST FrameWork](https://www.django-rest-framework.org/)
 
-## Preview
-
-https://github.com/mostafanasser2000/Restaurant-Management-API/assets/67506662/02879521-aad8-43b5-ba10-8790e1748d65
+## Youtube Video Preview
+[![API Preview](https://img.youtube.com/vi/Om1G0e3M0sI/0.jpg)](https://www.youtube.com/watch?v=Om1G0e3M0sI)
 
 
 
