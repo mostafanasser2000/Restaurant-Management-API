@@ -115,12 +115,12 @@ http://127.0.0.1:8000/api/v1/schema/swagger-ui/
 ### User groups management endpoints
 
 | Endpoint                            | Role           | Method     | Purpose                                                                                                                                                        |
-| ----------------------------------- | -------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- |
+| ----------------------------------- | -------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | 
 | **/api/v1/managers/**               | Admin          | **GET**    | Returns all managers                                                                                                                                           |
 | **/api/v1/managers/**               | Admin          | **POST**   | Assigns the user in the payload to the manager group and returns **201-Created**                                                                               |
 | **/api/v1/managers/{userId}/**      | Admin          | **DELETE** | Removes this particular user from the manager group and returns **200 – Success** if everything is okay. If the user is not found, returns **404 – Not found** |
 | **/api/v1/delivery-crew/**          | Admin, Manager | **GET**    | Returns all delivery crew                                                                                                                                      |
-| **/api/v1/delivery-crew/**          | Admin, Manager | **POST**   | Assigns the user in the payload to delivery crew group and returns **201-Created HTTP**                                                                        |     |
+| **/api/v1/delivery-crew/**          | Admin, Manager | **POST**   | Assigns the user in the payload to delivery crew group and returns **201-Created HTTP**                                                                        |
 | **/api/v1/delivery-crew/{userId}/** | Admin,Manager  | **DELETE** | Removes this user from the manager group and returns **200 – Success** if everything is okay.If the user is not found, returns **404 – Not found**             |
 
 ### Cart management endpoints
